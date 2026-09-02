@@ -1,4 +1,5 @@
 import { motion, useInView } from "framer-motion";
+import { Link } from "react-router-dom";
 import {
   Sparkles,
   Trophy,
@@ -79,20 +80,18 @@ export default function Home() {
               your knowledge on any topic, anytime.
             </p>
             <div className="flex justify-center md:justify-start flex-wrap gap-4">
-              <motion.a
-                whileHover={{ scale: 1.05, boxShadow: "0 10px 20px rgba(0,0,0,0.2)" }}
-                href="/create"
-                className="inline-block px-10 py-4 bg-white text-indigo-700 font-bold rounded-full shadow-lg transition-transform duration-300"
+              <Link
+                to="/create"
+                className="inline-block px-10 py-4 bg-white text-indigo-700 font-bold rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
               >
                 Create a Quiz
-              </motion.a>
-              <motion.a
-                whileHover={{ scale: 1.05, backgroundColor: "#ffffff", color: "#4c51bf" }}
-                href="/list"
-                className="inline-block px-10 py-4 border-2 border-white text-white font-bold rounded-full transition-all duration-300"
+              </Link>
+              <Link
+                to="/list"
+                className="inline-block px-10 py-4 border-2 border-white text-white font-bold rounded-full transition-all duration-300 hover:bg-white hover:text-indigo-700 hover:scale-105"
               >
                 Explore Quizzes
-              </motion.a>
+              </Link>
             </div>
           </div>
 
@@ -285,13 +284,12 @@ export default function Home() {
           <p className="text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto">
             It only takes a few minutes to create your first quiz.
           </p>
-          <motion.a
-            href="/create"
-            whileHover={{ scale: 1.05 }}
-            className="inline-block px-12 py-5 bg-white text-indigo-700 font-bold rounded-full shadow-lg transition-transform duration-300"
+          <Link
+            to="/create"
+            className="inline-block px-12 py-5 bg-white text-indigo-700 font-bold rounded-full shadow-lg transition-transform duration-300 hover:scale-105"
           >
             Create Your Quiz
-          </motion.a>
+          </Link>
         </motion.div>
       </main>
     </div>
