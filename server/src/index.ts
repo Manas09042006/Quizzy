@@ -8,6 +8,8 @@ import { connectDB } from "./config/db";
 // Routes
 import authRoutes from "./routes/authRoutes";
 import quizRoutes from "./routes/quizzes";
+import adminRoutes from "./routes/adminRoutes";
+import liveRoutes from "./routes/liveRoutes";
 
 const app = express();
 
@@ -18,10 +20,16 @@ app.use(express.json());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/quizzes", quizRoutes);
+app.use("/api/admin", adminRoutes);
+app.use("/api/live", liveRoutes);
 
 // Health Check
 app.get("/", (_req: Request, res: Response) => {
-  res.status(200).send("✅ API is running...");
+  res.status(200).send("✅ Quizzy API is running...");
+});
+
+app.get("/api/health", (_req: Request, res: Response) => {
+  res.status(200).json({ success: true, message: "Quizzy API is healthy" });
 });
 
 // 404 Handler
@@ -41,11 +49,11 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
 // Start Server
 const PORT = process.env.PORT || 4000;
 
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-  })
-  .catch((err) => {
-    console.error("Failed to connect to DB:", err);
-    process.exit(1);
-  });
+app.listen(PORT, () => {
+  console.log(`🚀 Quizzy Server listening on port ${PORT}`);
+});
+
+// Initialize DB in background
+connectDB().catch((err) => {
+  console.error("Database connection initialization error:", err);
+});

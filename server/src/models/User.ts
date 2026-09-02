@@ -2,10 +2,15 @@ import mongoose, { Schema, Document } from "mongoose";
 import bcrypt from "bcryptjs";
 
 export interface ITestResult {
-  quizTitle: string;
   quizId: string;
+  quizTitle: string;
   score: number;
   totalQuestions: number;
+  correctCount?: number;
+  wrongCount?: number;
+  unansweredCount?: number;
+  violationCount?: number;
+  status?: "completed" | "terminated_violations";
   date: Date;
 }
 
@@ -13,6 +18,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   password: string;
+  role: "admin" | "user";
   isAdmin: boolean;
   tests: ITestResult[];
   comparePassword(enteredPassword: string): Promise<boolean>;
@@ -23,6 +29,15 @@ const TestResultSchema = new Schema<ITestResult>({
   quizTitle: { type: String, required: true },
   score: { type: Number, required: true },
   totalQuestions: { type: Number, required: true },
+  correctCount: { type: Number, default: 0 },
+  wrongCount: { type: Number, default: 0 },
+  unansweredCount: { type: Number, default: 0 },
+  violationCount: { type: Number, default: 0 },
+  status: {
+    type: String,
+    enum: ["completed", "terminated_violations"],
+    default: "completed",
+  },
   date: { type: Date, default: Date.now },
 });
 
@@ -31,6 +46,7 @@ const UserSchema = new Schema<IUser>(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true },
+    role: { type: String, enum: ["admin", "user"], default: "user" },
     isAdmin: { type: Boolean, default: false },
     tests: [TestResultSchema],
   },

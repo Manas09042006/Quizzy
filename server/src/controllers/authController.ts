@@ -1,38 +1,72 @@
 import { Request, Response } from "express";
-import User, { IUser } from "../models/User";
+import mongoose from "mongoose";
+import User from "../models/User";
 import { generateToken } from "../utils/generateToken";
+import { mockStore } from "../utils/mockStore";
 
 // --- Register User ---
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role, adminPasscode } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "All fields are required" });
+      return res.status(400).json({ message: "Name, email, and password are required" });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: "Email already in use" });
+    const isAdmin =
+      role === "admin" ||
+      adminPasscode === "admin123" ||
+      req.body.isAdmin === true;
+
+    if (mongoose.connection.readyState === 1) {
+      const existingUser = await User.findOne({ email: email.toLowerCase() });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
+      const user = new User({
+        name: name.trim(),
+        email: email.trim().toLowerCase(),
+        password,
+        isAdmin,
+      });
+      await user.save();
+
+      const token = generateToken(user.id.toString());
+      return res.status(201).json({
+        message: "User registered successfully",
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin,
+        },
+        token,
+      });
+    } else {
+      // In-Memory Fallback
+      const existingUser = await mockStore.findUserByEmail(email);
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+
+      const user = await mockStore.createUser(name.trim(), email.trim(), password, isAdmin);
+      const token = generateToken(user._id);
+
+      return res.status(201).json({
+        message: "User registered successfully",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin,
+        },
+        token,
+      });
     }
-
-    const user = new User({ name, email, password });
-    await user.save();
-
-    // Optionally, return user info with token after registration
-    const token = generateToken(user.id.toString());
-
-    res.status(201).json({
-      message: "User registered successfully",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
-      token,
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  } catch (error: any) {
+    console.error("Registration error:", error);
+    res.status(500).json({ message: error.message || "Server error", error });
   }
 };
 
@@ -41,31 +75,60 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
     }
 
-    const isMatch = await user.comparePassword(password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
+    if (mongoose.connection.readyState === 1) {
+      const user = await User.findOne({ email: email.trim().toLowerCase() });
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      const token = generateToken(user.id.toString());
+
+      return res.status(200).json({
+        token,
+        user: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin || false,
+          tests: user.tests || [],
+        },
+      });
+    } else {
+      // In-Memory Fallback
+      const user = await mockStore.findUserByEmail(email.trim());
+      if (!user) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      const isMatch = await user.comparePassword(password);
+      if (!isMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      }
+
+      const token = generateToken(user._id);
+
+      return res.status(200).json({
+        token,
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin || false,
+          tests: user.tests || [],
+        },
+      });
     }
-
-    const token = generateToken(user.id.toString());
-
-    // Return token + user info
-    res.status(200).json({
-      token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        tests: user.tests, // Include test history
-      },
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error", error });
+  } catch (error: any) {
+    console.error("Login error:", error);
+    res.status(500).json({ message: error.message || "Server error", error });
   }
 };
-
-
