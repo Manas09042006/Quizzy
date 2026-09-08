@@ -2,28 +2,57 @@
 import { useState, useContext } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+<<<<<<< HEAD
 import { Menu, X, LogOut, User as UserIcon, Mail, Shield, Award } from "lucide-react";
 import { AuthContext } from "../context/authContext";
 import type { Variants } from "framer-motion";
 import { useSuccess } from "../context/SuccessContext";
 
+=======
+import { Menu, X, LogOut, User, Mail, Info } from 'lucide-react';
+import { AuthContext } from "../context/authContext";
+import type { Variants } from 'framer-motion';
+import { useSuccess } from "../context/SuccessContext";
+
+// An array of navigation links
+const navLinks = [
+  { name: "Home", path: "/" },
+  { name: "Create Quiz", path: "/create" },
+  { name: "My Quizzes", path: "/list" },
+  { name: "Explore", path: "/explore" },
+];
+
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+<<<<<<< HEAD
   const { user, isAdmin, logout } = useContext(AuthContext);
   const { addMessage } = useSuccess();
 
+=======
+  // Get user and logout function from the AuthContext
+  const { user, logout } = useContext(AuthContext);
+  const {addMessage} = useSuccess();
+
+  // Function to toggle the mobile menu and close the modal if it's open
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen);
     if (isModalOpen) setIsModalOpen(false);
   };
 
+<<<<<<< HEAD
+=======
+  // Function to toggle the user modal and close the menu if it's open
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
     if (isMobileMenuOpen) setIsMobileMenuOpen(false);
   };
 
+<<<<<<< HEAD
   const handleLogout = () => {
     logout();
     addMessage("Logged out successfully");
@@ -54,11 +83,33 @@ export default function Navbar() {
       ? "text-indigo-600 font-bold border-b-2 border-indigo-600 pb-1 transition-colors duration-200"
       : "hover:text-indigo-600 font-medium transition-colors duration-200";
 
+=======
+  // Function to handle logout and close the modal
+  const handleLogout = () => {
+    logout();
+    addMessage("Logout Sucessfully");
+    setIsModalOpen(false);
+  };
+  
+  // Function to handle the dashboard link click
+  const handleDashboardClick = () => {
+    setIsModalOpen(false); // Close the modal when the user navigates
+  };
+
+  // Dynamically apply classes for active links
+  const linkClasses = ({ isActive }: { isActive: boolean }) =>
+    isActive
+      ? "text-indigo-600 font-semibold border-b-2 border-indigo-600 pb-1 transition-colors duration-200"
+      : "hover:text-indigo-600 transition-colors duration-200";
+
+  // Framer Motion variants for the mobile menu
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   const mobileMenuVariants: Variants = {
     hidden: { opacity: 0, y: -20 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
+<<<<<<< HEAD
   const modalVariants: Variants = {
     hidden: { opacity: 0, scale: 0.85 },
     visible: { opacity: 1, scale: 1, transition: { type: "spring", bounce: 0.3, duration: 0.4 } },
@@ -67,10 +118,22 @@ export default function Navbar() {
   return (
     <nav className="bg-white text-gray-700 shadow-sm border-b border-gray-100 sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+=======
+  // Framer Motion variants for the user modal
+  const modalVariants: Variants = {
+    hidden: { opacity: 0, scale: 0.8 },
+    visible: { opacity: 1, scale: 1, transition: { type: "spring", bounce: 0.4, duration: 0.5 } },
+  };
+
+  return (
+    <nav className="bg-white text-gray-700 shadow-md sticky top-0 z-50">
+      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
         {/* Brand Name */}
         <motion.div
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+<<<<<<< HEAD
           transition={{ duration: 0.4 }}
           className="flex items-center gap-3"
         >
@@ -102,15 +165,29 @@ export default function Navbar() {
               )}
             </span>
           )}
+=======
+          transition={{ duration: 0.5, delay: 0.2 }}
+        >
+          <Link to="/" className="text-3xl font-extrabold text-indigo-600">
+            Quizzy
+          </Link>
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
         </motion.div>
 
         <div className="flex items-center space-x-6">
           {/* Desktop Navigation Links */}
           <motion.div
+<<<<<<< HEAD
             className="hidden md:flex items-center space-x-6 text-sm"
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.08 } } }}
+=======
+            className="hidden md:flex items-center space-x-6"
+            initial="hidden"
+            animate="visible"
+            variants={{ visible: { transition: { staggerChildren: 0.1 } } }}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
           >
             {navLinks.map((link) => (
               <NavLink key={link.name} to={link.path} className={linkClasses}>
@@ -120,6 +197,7 @@ export default function Navbar() {
           </motion.div>
 
           {/* User Avatar and Mobile Menu Button */}
+<<<<<<< HEAD
           <div className="flex items-center space-x-3">
             {user ? (
               <motion.button
@@ -135,22 +213,48 @@ export default function Navbar() {
                 <span className="text-xs font-semibold text-gray-800 max-w-[100px] truncate hidden sm:inline">
                   {user.name}
                 </span>
+=======
+          <div className="flex items-center space-x-4">
+            {user ? (
+              <motion.button
+                onClick={toggleModal}
+                className="w-10 h-10 rounded-full bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-lg hover:ring-2 ring-indigo-500 transition-all duration-200"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                aria-label="User profile"
+              >
+                {/* Assuming `user` is an object with a `name` property */}
+                {user && user.name.charAt(0).toUpperCase()}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
               </motion.button>
             ) : (
               <NavLink
                 to="/auth"
+<<<<<<< HEAD
                 className="bg-indigo-600 text-white text-sm font-semibold px-4 py-2 rounded-xl hover:bg-indigo-700 transition shadow-sm"
               >
                 Sign In
+=======
+                className="hidden md:block bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+              >
+                Login
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
               </NavLink>
             )}
 
             <button
               onClick={toggleMobileMenu}
+<<<<<<< HEAD
               className="p-2 rounded-xl text-gray-500 hover:bg-gray-100 transition md:hidden"
               aria-label="Toggle mobile menu"
             >
               {isMobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+=======
+              className="p-2 rounded-full text-gray-500 hover:bg-gray-200 transition-colors duration-300 md:hidden"
+              aria-label="Toggle mobile menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
             </button>
           </div>
         </div>
@@ -164,19 +268,30 @@ export default function Navbar() {
             animate="visible"
             exit="hidden"
             variants={mobileMenuVariants}
+<<<<<<< HEAD
             className="md:hidden bg-white border-b border-gray-200 shadow-xl pb-4 px-4"
           >
             <div className="flex flex-col space-y-3 pt-3">
+=======
+            className="md:hidden bg-white absolute top-full left-0 w-full shadow-lg pb-4"
+          >
+            <div className="flex flex-col items-center space-y-4 pt-4">
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
               {navLinks.map((link) => (
                 <NavLink
                   key={link.name}
                   to={link.path}
                   onClick={toggleMobileMenu}
+<<<<<<< HEAD
                   className="px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-50 font-medium text-sm"
+=======
+                  className={linkClasses}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
                 >
                   {link.name}
                 </NavLink>
               ))}
+<<<<<<< HEAD
               {user ? (
                 <button
                   onClick={() => {
@@ -189,14 +304,28 @@ export default function Navbar() {
                   <span className="text-xs px-2 py-0.5 rounded bg-indigo-600 text-white">
                     {isAdmin ? "Admin" : "Student"}
                   </span>
+=======
+              {user?.name ? (
+                <button
+                  onClick={() => { toggleModal(); toggleMobileMenu(); }}
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors w-1/2"
+                >
+                  {user.name}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
                 </button>
               ) : (
                 <NavLink
                   to="/auth"
                   onClick={toggleMobileMenu}
+<<<<<<< HEAD
                   className="w-full text-center bg-indigo-600 text-white py-2.5 rounded-xl font-semibold text-sm"
                 >
                   Sign In
+=======
+                  className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors w-1/2 text-center"
+                >
+                  Login
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
                 </NavLink>
               )}
             </div>
@@ -211,13 +340,18 @@ export default function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+<<<<<<< HEAD
             className="fixed inset-0 bg-black/40 backdrop-blur-xs flex items-center justify-center z-50 p-4"
+=======
+            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
             onClick={toggleModal}
           >
             <motion.div
               initial="hidden"
               animate="visible"
               exit="hidden"
+<<<<<<< HEAD
               variants={modalVariants}
               className="bg-white p-6 rounded-2xl shadow-2xl max-w-sm w-full mx-auto border border-gray-100"
               onClick={(e) => e.stopPropagation()}
@@ -264,10 +398,46 @@ export default function Navbar() {
                     <p className="font-semibold text-gray-800">
                       {isAdmin ? "Full Admin & Quiz Host" : "Candidate / Quiz Taker"}
                     </p>
+=======
+              variants={modalVariants as Variants}
+              className="bg-white p-8 rounded-2xl shadow-2xl max-w-sm w-full mx-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
+                  <Info size={24} className="text-indigo-600" />
+                  User Profile
+                </h3>
+                <button
+                  onClick={toggleModal}
+                  className="text-gray-400 hover:text-gray-800 transition-colors duration-200"
+                  aria-label="Close modal"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg">
+                  <User size={24} className="text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-500">Name</p>
+                    {/* Assuming `user` is an object with a `name` property */}
+                    <p className="font-semibold text-gray-800">{user.name}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 p-4 bg-gray-100 rounded-lg">
+                  <Mail size={24} className="text-gray-500" />
+                  <div>
+                    <p className="text-sm text-gray-500">Email</p>
+                    {/* Assuming `user` is an object with an `email` property */}
+                    <p className="font-semibold text-gray-800">{user.email}</p>
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
                   </div>
                 </div>
               </div>
 
+<<<<<<< HEAD
               <div className="flex flex-col gap-2.5">
                 <Link
                   to={isAdmin ? "/admin" : "/dashboard"}
@@ -288,6 +458,27 @@ export default function Navbar() {
                   <LogOut size={16} />
                   Sign Out
                 </button>
+=======
+              <div className="mt-8 flex flex-col gap-3">
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Link
+                      to="/dashboard"
+                      onClick={handleDashboardClick}
+                      className="w-full py-3 bg-blue-600 text-white font-bold rounded-lg shadow-md flex items-center justify-center gap-2 hover:bg-blue-700 transition-colors duration-200"
+                    >
+                      Dashboard
+                    </Link>
+                </motion.div>
+                <motion.button
+                  onClick={handleLogout}
+                  className="w-full py-3 bg-red-600 text-white font-bold rounded-lg shadow-md flex items-center justify-center gap-2 hover:bg-red-700 transition-colors duration-200"
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <LogOut size={20} />
+                  Logout
+                </motion.button>
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
               </div>
             </motion.div>
           </motion.div>

@@ -1,8 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
+<<<<<<< HEAD
 import mongoose from "mongoose";
 import User from "../models/User";
 import { mockStore } from "../utils/mockStore";
+=======
+import User from "../models/User";
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 
 interface JwtPayload {
   userId: string;
@@ -21,6 +25,7 @@ export const authMiddleware = async (
   const token = authHeader.split(" ")[1];
 
   try {
+<<<<<<< HEAD
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "secret"
@@ -59,6 +64,25 @@ export const authMiddleware = async (
   }
 };
 
+=======
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload;
+
+    // Find user by ID from token
+    const user = await User.findById(decoded.userId).select("-password");
+    if (!user) {
+      return res.status(401).json({ message: "Unauthorized: User not found" });
+    }
+
+    req.user = user;
+    next();
+  } catch (err) {
+    console.error("Auth error:", err);
+    res.status(401).json({ message: "Unauthorized: Invalid token" });
+  }
+};
+
+
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 export const adminMiddleware = (
   req: Request & { user?: any },
   res: Response,

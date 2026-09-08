@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # 🎓 Quizzy — Developer Guide
 
 > A full-stack Quiz Application with **Admin** and **User** roles, real-time quiz lifecycle control, anti-cheat full-screen enforcement, per-question countdown timers, and live admin surveillance.
@@ -368,3 +369,6 @@ git push origin main
 ## 📄 License
 
 © 2026 Quizzy. All rights reserved By veduu.
+=======
+
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6

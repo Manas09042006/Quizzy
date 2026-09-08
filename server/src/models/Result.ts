@@ -2,6 +2,7 @@ import mongoose, { Schema, Document } from "mongoose";
 
 export interface IResult extends Document {
   userId: mongoose.Types.ObjectId;
+<<<<<<< HEAD
   userName: string;
   userEmail: string;
   quizId: mongoose.Types.ObjectId;
@@ -18,11 +19,19 @@ export interface IResult extends Document {
   status: "completed" | "terminated_violations";
   startedAt?: Date;
   completedAt: Date;
+=======
+  quizId: mongoose.Types.ObjectId;
+  quizTitle: string;
+  score: number;
+  total: number;
+  answers: number[];
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   createdAt: Date;
 }
 
 const ResultSchema = new Schema<IResult>({
   userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+<<<<<<< HEAD
   userName: { type: String, default: "Participant" },
   userEmail: { type: String, default: "" },
   quizId: { type: Schema.Types.ObjectId, ref: "Quiz", required: true },
@@ -43,6 +52,13 @@ const ResultSchema = new Schema<IResult>({
   },
   startedAt: { type: Date, default: Date.now },
   completedAt: { type: Date, default: Date.now },
+=======
+  quizId: { type: Schema.Types.ObjectId, ref: "Quiz", required: true },
+  quizTitle: { type: String, required: true },
+  score: { type: Number, required: true },
+  total: { type: Number, required: true },
+  answers: { type: [Number], required: true },
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   createdAt: { type: Date, default: Date.now },
 });
 

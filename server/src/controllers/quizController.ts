@@ -2,19 +2,29 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 import Quiz from "../models/Quiz";
 import Result from "../models/Result";
+<<<<<<< HEAD
 import Attempt from "../models/Attempt";
+=======
+import User from "../models/User";
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 import {
   createQuizSchema,
   submitQuizSchema,
 } from "../validators/quizValidator";
+<<<<<<< HEAD
 import { mockStore } from "../utils/mockStore";
 import { broadcastAdminEvent } from "./liveController";
 
 export const createQuiz = async (req: Request & { user?: any }, res: Response) => {
+=======
+
+export const createQuiz = async (req: Request, res: Response) => {
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   try {
     const { error } = createQuizSchema.validate(req.body, {
       abortEarly: false,
     });
+<<<<<<< HEAD
     if (error) {
       return res.status(400).json({
         success: false,
@@ -80,11 +90,26 @@ export const createQuiz = async (req: Request & { user?: any }, res: Response) =
       success: false,
       message: err.message || "Server error while creating quiz.",
     });
+=======
+    if (error)
+      return res
+        .status(400)
+        .json({ success: false, errors: error.details.map((d) => d.message) });
+
+    const quiz = new Quiz(req.body);
+    await quiz.save();
+    res.status(201).json({ success: true, data: quiz });
+  } catch {
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while creating quiz." });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   }
 };
 
 export const listQuizzes = async (_req: Request, res: Response) => {
   try {
+<<<<<<< HEAD
     if (mongoose.connection.readyState === 1) {
       const quizzes = await Quiz.find()
         .select("_id title description status timerMode defaultTimeLimit overallTimeLimit minTimePerQuestion shuffleQuestions marksPerQuestion createdAt questions")
@@ -140,12 +165,26 @@ export const listQuizzes = async (_req: Request, res: Response) => {
       success: false,
       message: "Server error while fetching quizzes.",
     });
+=======
+    const quizzes = await Quiz.find()
+      .select("_id title createdAt")
+      .sort({ createdAt: -1 });
+    res.status(200).json({ success: true, data: quizzes });
+  } catch {
+    res
+      .status(500)
+      .json({
+        success: false,
+        message: "Server error while fetching quizzes.",
+      });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   }
 };
 
 export const getQuiz = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
+<<<<<<< HEAD
 
     if (mongoose.connection.readyState === 1) {
       if (!mongoose.Types.ObjectId.isValid(id)) {
@@ -201,6 +240,24 @@ export const getQuiz = async (req: Request, res: Response) => {
       success: false,
       message: "Server error while fetching quiz.",
     });
+=======
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid quiz ID." });
+
+    const quiz = await Quiz.findById(id);
+    if (!quiz)
+      return res
+        .status(404)
+        .json({ success: false, message: "Quiz not found." });
+
+    res.status(200).json({ success: true, data: quiz });
+  } catch {
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while fetching quiz." });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   }
 };
 
@@ -211,6 +268,7 @@ export const submitQuiz = async (
   try {
     const { id } = req.params;
 
+<<<<<<< HEAD
     const { error } = submitQuizSchema.validate(req.body, {
       abortEarly: false,
     });
@@ -631,5 +689,70 @@ export const getQuizResult = async (
       success: false,
       message: "Server error while fetching quiz result.",
     });
+=======
+    if (!mongoose.Types.ObjectId.isValid(id))
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid quiz ID" });
+
+    // Validate answers
+    const { error } = submitQuizSchema.validate(req.body, {
+      abortEarly: false,
+    });
+    if (error)
+      return res
+        .status(400)
+        .json({ success: false, errors: error.details.map((d) => d.message) });
+
+    const { answers } = req.body as { answers: number[] };
+    const quiz = await Quiz.findById(id);
+    if (!quiz)
+      return res
+        .status(404)
+        .json({ success: false, message: "Quiz not found" });
+
+    // Calculate score
+    let score = 0;
+    quiz.questions.forEach((q, idx) => {
+      if (answers[idx] === q.correctIndex) score++;
+    });
+
+    // Save result
+    const result = new Result({
+      userId: req.user._id,
+      quizId: quiz._id,
+      quizTitle: quiz.title, // MUST include
+      score,
+      total: quiz.questions.length,
+      answers,
+    });
+    await result.save();
+
+    // Update user's test history
+    req.user.tests.push({
+      quizId: quiz.id.toString(),
+      quizTitle: quiz.title, // MUST include
+      score,
+      totalQuestions: quiz.questions.length,
+      date: new Date(),
+    });
+    await req.user.save();
+
+    const details = quiz.questions.map((q, idx) => ({
+      question: q.question,
+      options: q.options,
+      correctIndex: q.correctIndex,
+      yourAnswer: answers[idx] ?? null,
+    }));
+
+    res
+      .status(200)
+      .json({ success: true,title:quiz.title, total: quiz.questions.length, score, details });
+  } catch (err: any) {
+    console.error("Error submitting quiz:", err);
+    res
+      .status(500)
+      .json({ success: false, message: "Server error while submitting quiz." });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   }
 };

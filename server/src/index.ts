@@ -3,11 +3,16 @@ dotenv.config();
 
 import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
+<<<<<<< HEAD
 import { connectDB, isMongoConnected } from "./config/db";
+=======
+import { connectDB } from "./config/db";
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 
 // Routes
 import authRoutes from "./routes/authRoutes";
 import quizRoutes from "./routes/quizzes";
+<<<<<<< HEAD
 import attemptRoutes from "./routes/attemptRoutes";
 import adminRoutes from "./routes/adminRoutes";
 import liveRoutes from "./routes/liveRoutes";
@@ -28,11 +33,19 @@ app.use(
   })
 );
 
+=======
+
+const app = express();
+
+// Middleware
+app.use(cors());
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/quizzes", quizRoutes);
+<<<<<<< HEAD
 app.use("/api/attempts", attemptRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/live", liveRoutes);
@@ -49,6 +62,12 @@ app.get("/api/health", (_req: Request, res: Response) => {
     mode: isMongoConnected() ? "MongoDB Atlas / Cloud" : "Persistent File Storage",
     timestamp: new Date().toISOString(),
   });
+=======
+
+// Health Check
+app.get("/", (_req: Request, res: Response) => {
+  res.status(200).send("✅ API is running...");
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 });
 
 // 404 Handler
@@ -65,6 +84,7 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   });
 });
 
+<<<<<<< HEAD
 // Start Server (0.0.0.0 binding ensures external reachability on cloud providers)
 const PORT = process.env.PORT || 4000;
 
@@ -78,3 +98,16 @@ app.listen(Number(PORT), "0.0.0.0", () => {
 connectDB().catch((err) => {
   console.error("Database connection initialization error:", err);
 });
+=======
+// Start Server
+const PORT = process.env.PORT || 4000;
+
+connectDB()
+  .then(() => {
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+  })
+  .catch((err) => {
+    console.error("Failed to connect to DB:", err);
+    process.exit(1);
+  });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6

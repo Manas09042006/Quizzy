@@ -3,7 +3,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/authContext";
 import { useApi } from "../api/api";
+<<<<<<< HEAD
 import { Mail, Lock, User as UserIcon, RefreshCw, Sparkles, Award } from "lucide-react";
+=======
+import { Mail, Lock, User, RefreshCw } from 'lucide-react';
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 import { useSuccess } from "../context/SuccessContext";
 
 interface FormState {
@@ -14,11 +18,15 @@ interface FormState {
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
+<<<<<<< HEAD
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
     password: "",
   });
+=======
+  const [form, setForm] = useState<FormState>({ name: "", email: "", password: "" });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string | null }>({});
 
@@ -31,6 +39,7 @@ export default function AuthPage() {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+<<<<<<< HEAD
     setForm((prev) => ({ ...prev, [name]: value }));
 
     if (name === "email") {
@@ -50,11 +59,25 @@ export default function AuthPage() {
         ...prev,
         name: !value && !isLogin ? "Name is required" : null,
       }));
+=======
+    setForm(prev => ({ ...prev, [name]: value }));
+
+    // Live validation
+    if (name === 'email') {
+      setErrors(prev => ({ ...prev, email: value && !emailRegex.test(value) ? 'Invalid email address' : null }));
+    }
+    if (name === 'password') {
+      setErrors(prev => ({ ...prev, password: value && value.length < 6 ? 'Password must be at least 6 characters' : null }));
+    }
+    if (name === 'name') {
+      setErrors(prev => ({ ...prev, name: !value && !isLogin ? 'Name is required' : null }));
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: { [key: string]: string } = {};
+<<<<<<< HEAD
     if (!form.email.trim() || !emailRegex.test(form.email)) {
       newErrors.email = "Please enter a valid email address";
     }
@@ -64,10 +87,16 @@ export default function AuthPage() {
     if (!isLogin && !form.name.trim()) {
       newErrors.name = "Full name is required";
     }
+=======
+    if (!form.email.trim() || !emailRegex.test(form.email)) newErrors.email = 'Invalid email address';
+    if (!form.password.trim() || form.password.length < 6) newErrors.password = 'Password must be at least 6 characters';
+    if (!isLogin && !form.name.trim()) newErrors.name = 'Full name is required';
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
+<<<<<<< HEAD
   /*
   const fillDemoCredentials = (role: "admin" | "user") => {
     if (role === "admin") {
@@ -90,11 +119,14 @@ export default function AuthPage() {
   };
   */
 
+=======
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
 
     setLoading(true);
+<<<<<<< HEAD
     setErrors({});
     try {
       const endpoint = isLogin ? "/auth/login" : "/auth/register";
@@ -108,11 +140,17 @@ export default function AuthPage() {
         };
 
       const res = await api.post(endpoint, payload);
+=======
+    try {
+      const endpoint = isLogin ? "/auth/login" : "/auth/register";
+      const res = await api.post(endpoint, form);
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 
       if (isLogin) {
         const { token, user } = res.data;
         if (token && user) {
           login(token, user);
+<<<<<<< HEAD
           const isUserAdmin = Boolean(user.isAdmin || user.role === "admin");
           addMessage(`Welcome back, ${user.name || (isUserAdmin ? "Admin" : "Student")}!`);
           if (isUserAdmin) {
@@ -151,12 +189,28 @@ export default function AuthPage() {
         (Array.isArray(err.response?.data?.errors) ? err.response.data.errors.join(", ") : null) ||
         "Authentication failed. Please verify your credentials.";
       setErrors({ general: serverMessage });
+=======
+          addMessage("Login successful!");
+          navigate("/");
+        } else {
+          setErrors({ email: "Login failed. Check your credentials." });
+        }
+      } else {
+        addMessage("Account created successfully! Please login.");
+        setIsLogin(true);
+        setForm({ name: "", email: "", password: "" });
+        setErrors({});
+      }
+    } catch (err: any) {
+      setErrors({ email: err.response?.data?.message || "Something went wrong." });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
     } finally {
       setLoading(false);
     }
   };
 
   return (
+<<<<<<< HEAD
     <div className="min-h-[85vh] flex items-center justify-center bg-slate-50 py-12 px-4 sm:px-6 lg:px-8">
       <motion.div
         initial={{ opacity: 0, y: 25 }}
@@ -241,14 +295,37 @@ export default function AuthPage() {
                     size={19}
                     className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
                   />
+=======
+    <div className="min-h-screen flex items-center justify-center bg-gray-100 p-1">
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, type: 'spring', damping: 10, stiffness: 100 }}
+        className="bg-white-900 rounded-3xl p-10 w-full max-w-md border border-gray-200"
+      >
+        <h2 className="text-3xl font-extrabold text-center mb-8 text-gray-900">
+          {isLogin ? "Welcome Back" : "Join Us"}
+        </h2>
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <AnimatePresence mode="wait">
+            {!isLogin && (
+              <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3 }}>
+                <div className="relative">
+                  <User size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
                   <input
                     type="text"
                     name="name"
                     placeholder="Full Name"
                     value={form.name}
                     onChange={handleChange}
+<<<<<<< HEAD
                     className={`w-full p-3 pl-11 bg-slate-50 text-slate-900 rounded-xl placeholder-slate-400 border text-sm ${errors.name ? "border-red-500 ring-1 ring-red-500" : "border-slate-200"
                       } focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white transition-all`}
+=======
+                    className={`w-full p-3 pl-10 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-500 border ${errors.name ? 'border-red-500' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
                   />
                   {errors.name && <p className="text-red-600 text-xs mt-1">{errors.name}</p>}
                 </div>
@@ -256,24 +333,34 @@ export default function AuthPage() {
             )}
           </AnimatePresence>
 
+<<<<<<< HEAD
           {/* Email */}
           <div className="relative">
             <Mail
               size={19}
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"
             />
+=======
+          <div className="relative">
+            <Mail size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
             <input
               type="email"
               name="email"
               placeholder="Email Address"
               value={form.email}
               onChange={handleChange}
+<<<<<<< HEAD
               className={`w-full p-3 pl-11 bg-slate-50 text-slate-900 rounded-xl placeholder-slate-400 border text-sm ${errors.email ? "border-red-500 ring-1 ring-red-500" : "border-slate-200"
                 } focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white transition-all`}
+=======
+              className={`w-full p-3 pl-10 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-500 border ${errors.email ? 'border-red-500' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
             />
             {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email}</p>}
           </div>
 
+<<<<<<< HEAD
           {/* Password */}
           <div className="relative">
             <Lock
@@ -288,12 +375,24 @@ export default function AuthPage() {
               onChange={handleChange}
               className={`w-full p-3 pl-11 bg-slate-50 text-slate-900 rounded-xl placeholder-slate-400 border text-sm ${errors.password ? "border-red-500 ring-1 ring-red-500" : "border-slate-200"
                 } focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:bg-white transition-all`}
+=======
+          <div className="relative">
+            <Lock size={20} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <input
+              type="password"
+              name="password"
+              placeholder="Password"
+              value={form.password}
+              onChange={handleChange}
+              className={`w-full p-3 pl-10 bg-gray-50 text-gray-900 rounded-xl placeholder-gray-500 border ${errors.password ? 'border-red-500' : 'border-gray-200'} focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all`}
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
             />
             {errors.password && <p className="text-red-600 text-xs mt-1">{errors.password}</p>}
           </div>
 
           <motion.button
             type="submit"
+<<<<<<< HEAD
             whileHover={{ scale: 1.01 }}
             whileTap={{ scale: 0.99 }}
             disabled={loading}
@@ -321,6 +420,26 @@ export default function AuthPage() {
             {isLogin ? "Sign Up" : "Log In"}
           </button>
         </div>
+=======
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            disabled={loading}
+            className="w-full py-4 bg-indigo-600 text-white font-semibold text-lg rounded-xl shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex justify-center items-center"
+          >
+            {loading ? <RefreshCw size={24} className="animate-spin" /> : isLogin ? "Login" : "Create Account"}
+          </motion.button>
+        </form>
+
+        <p className="mt-8 text-center text-gray-500">
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+          <button
+            onClick={() => { setIsLogin(!isLogin); setForm({ name: "", email: "", password: "" }); setErrors({}); }}
+            className="text-indigo-600 font-medium hover:text-indigo-500 transition-colors"
+          >
+            {isLogin ? "Sign Up" : "Login"}
+          </button>
+        </p>
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
       </motion.div>
     </div>
   );

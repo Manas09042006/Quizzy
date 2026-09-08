@@ -1,13 +1,19 @@
 import { Request, Response } from "express";
+<<<<<<< HEAD
 import mongoose from "mongoose";
 import User from "../models/User";
 import { generateToken } from "../utils/generateToken";
 import { mockStore } from "../utils/mockStore";
 import { logAudit } from "../utils/auditLogger";
+=======
+import User, { IUser } from "../models/User";
+import { generateToken } from "../utils/generateToken";
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
 
 // --- Register User ---
 export const registerUser = async (req: Request, res: Response) => {
   try {
+<<<<<<< HEAD
     const { name, email, password, role, adminPasscode } = req.body;
 
     if (!name || !name.trim() || !email || !email.trim() || !password) {
@@ -137,6 +143,36 @@ export const registerUser = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.error("Registration error:", error);
     res.status(500).json({ message: error.message || "Server error", error });
+=======
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ message: "Email already in use" });
+    }
+
+    const user = new User({ name, email, password });
+    await user.save();
+
+    // Optionally, return user info with token after registration
+    const token = generateToken(user.id.toString());
+
+    res.status(201).json({
+      message: "User registered successfully",
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
+      token,
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
   }
 };
 
@@ -145,6 +181,7 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
 
+<<<<<<< HEAD
     if (!email || !password) {
       return res.status(400).json({ message: "Email and password are required" });
     }
@@ -272,3 +309,33 @@ export const loginUser = async (req: Request, res: Response) => {
     res.status(500).json({ message: error.message || "Server error", error });
   }
 };
+=======
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const isMatch = await user.comparePassword(password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    const token = generateToken(user.id.toString());
+
+    // Return token + user info
+    res.status(200).json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        tests: user.tests, // Include test history
+      },
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error", error });
+  }
+};
+
+
+>>>>>>> a3beb8596b3e5ac64b90309eb8e887dff468dbd6
