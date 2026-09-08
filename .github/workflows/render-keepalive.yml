@@ -1,0 +1,31 @@
+name: Render Server Keep-Alive Cron
+
+on:
+  schedule:
+    # Runs every 14 minutes to prevent Render free instance from idling out (Render spins down at 15 mins)
+    - cron: "*/14 * * * *"
+  workflow_dispatch: # Allows manual trigger from the GitHub Actions tab anytime
+
+jobs:
+  keep-alive:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Quizzy Render Backend Health Endpoint
+        run: |
+          TARGET_URL="${{ secrets.RENDER_SERVER_URL }}"
+          if [ -z "$TARGET_URL" ]; then
+            TARGET_URL="https://quizzy-api.onrender.com"
+          fi
+          # Strip trailing slash if present
+          TARGET_URL="${TARGET_URL%/}"
+          PING_ENDPOINT="${TARGET_URL}/api/health"
+
+          echo "🚀 Sending Keep-Alive Ping to: $PING_ENDPOINT"
+          HTTP_RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$PING_ENDPOINT" || echo "FAILED")
+          
+          echo "⚡ Server responded with HTTP status: $HTTP_RESPONSE"
+          if [ "$HTTP_RESPONSE" -eq 200 ] || [ "$HTTP_RESPONSE" -eq 301 ] || [ "$HTTP_RESPONSE" -eq 302 ]; then
+            echo "✅ Render backend is active and healthy!"
+          else
+            echo "⚠️ Health check returned code $HTTP_RESPONSE (Container may be waking up from cold start)"
+          fi
