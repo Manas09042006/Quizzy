@@ -1,0 +1,17 @@
+{
+  "name": "quizzy-monorepo",
+  "version": "1.0.0",
+  "description": "Quizzy - Modern Interactive Quiz Platform",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix server run build && npm --prefix client run build",
+    "build:server": "npm --prefix server run build",
+    "build:client": "npm --prefix client run build",
+    "start": "npm --prefix server run start",
+    "dev:server": "npm --prefix server run dev",
+    "dev:client": "npm --prefix client run dev"
+  },
+  "keywords": ["quiz", "typescript", "react", "express", "vite"],
+  "author": "",
+  "license": "ISC"
+}
